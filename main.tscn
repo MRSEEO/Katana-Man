@@ -212,6 +212,17 @@ extents = Vector2( 266.667, 266.667 )
 [node name="main" type="Node2D"]
 script = ExtResource( 10 )
 
+[node name="HUD" type="CanvasLayer" parent="."]
+
+[node name="time_bar" type="ProgressBar" parent="HUD"]
+margin_left = -112.0
+margin_top = -232.0
+margin_right = 80.0
+margin_bottom = -192.0
+__meta__ = {
+"_edit_use_anchors_": true
+}
+
 [node name="player" type="KinematicBody2D" parent="."]
 scale = Vector2( 3, 3 )
 script = ExtResource( 3 )
@@ -219,7 +230,7 @@ script = ExtResource( 3 )
 [node name="sprite" type="AnimatedSprite" parent="player"]
 frames = SubResource( 5 )
 animation = "idle"
-frame = 3
+frame = 1
 playing = true
 
 [node name="anim" type="AnimationPlayer" parent="player/sprite"]
@@ -353,15 +364,6 @@ texture = ExtResource( 7 )
 __meta__ = {
 "_edit_lock_": true
 }
-
-[node name="HUD" type="CanvasLayer" parent="."]
-layer = 5
-
-[node name="time_bar" type="ProgressBar" parent="HUD"]
-margin_left = -104.0
-margin_top = -268.0
-margin_right = 88.0
-margin_bottom = -228.0
 
 [connection signal="im_here" from="player" to="player" method="_on_player_im_here"]
 [connection signal="timeout" from="player/trail/Timer" to="player/trail" method="_on_Timer_timeout"]
