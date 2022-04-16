@@ -219,7 +219,7 @@ script = ExtResource( 3 )
 [node name="sprite" type="AnimatedSprite" parent="player"]
 frames = SubResource( 5 )
 animation = "idle"
-frame = 2
+frame = 3
 playing = true
 
 [node name="anim" type="AnimationPlayer" parent="player/sprite"]
@@ -253,6 +253,11 @@ autostart = true
 
 [node name="recoil_timer" type="Timer" parent="player"]
 wait_time = 5.0
+one_shot = true
+
+[node name="slowmo_timer" type="Timer" parent="player"]
+wait_time = 4.0
+one_shot = true
 
 [node name="time_sound" type="AudioStreamPlayer" parent="player"]
 stream = ExtResource( 11 )
@@ -310,8 +315,15 @@ shape = SubResource( 12 )
 [node name="Camera2D" type="Camera2D" parent="."]
 current = true
 zoom = Vector2( 0.5, 0.5 )
+__meta__ = {
+"_edit_lock_": true
+}
 
 [node name="wall" type="StaticBody2D" parent="."]
+__meta__ = {
+"_edit_group_": true,
+"_edit_lock_": true
+}
 
 [node name="wall" type="Area2D" parent="wall" groups=["wall"]]
 
@@ -342,8 +354,18 @@ __meta__ = {
 "_edit_lock_": true
 }
 
+[node name="HUD" type="CanvasLayer" parent="."]
+layer = 5
+
+[node name="time_bar" type="ProgressBar" parent="HUD"]
+margin_left = -104.0
+margin_top = -268.0
+margin_right = 88.0
+margin_bottom = -228.0
+
 [connection signal="im_here" from="player" to="player" method="_on_player_im_here"]
 [connection signal="timeout" from="player/trail/Timer" to="player/trail" method="_on_Timer_timeout"]
 [connection signal="timeout" from="player/recoil_timer" to="player" method="_on_recoil_timer_timeout"]
+[connection signal="timeout" from="player/slowmo_timer" to="player" method="_on_slowmo_timer_timeout"]
 [connection signal="area_entered" from="point_cursor/Area2D" to="point_cursor" method="_on_Area2D_area_entered"]
 [connection signal="area_exited" from="point_cursor/Area2D" to="point_cursor" method="_on_Area2D_area_exited"]

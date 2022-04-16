@@ -22,6 +22,8 @@ var slice_speed : float
 
 var trail = false
 
+
+var slowmo_timeout = false
 func _ready():
 	on_way = false
 	slice_mode = false
@@ -67,9 +69,8 @@ func _physics_process(delta):
 	
 	
 	
-	if Input.is_action_pressed("right_click") and !on_way and can_attack:
+	if Input.is_action_pressed("right_click") and !on_way and can_attack and !slowmo_timeout:
 		get_parent().get_node("point_cursor").visible = true; slice_mode = true
-		
 		
 		
 		if Input.is_action_just_pressed("left_click") and existing_points.size() < 5 and get_parent().get_node("point_cursor").can_place_point:
@@ -86,12 +87,23 @@ func _physics_process(delta):
 			existing_points.append(str(point.get_name()))
 			
 			
-			
+			AudioControl.play_sound("res://sounds/place_sound_1.wav")
 			get_parent().get_node("point_cursor/Sprite/anim").play("placed")
 
 	else:
-		if Input.is_action_just_released("right_click") and existing_points.size() != 0 and !on_way:
-			go_to_point(existing_points)
+		if Input.is_action_just_released("right_click") and !on_way or slowmo_timeout:
+			if existing_points.size() != 0:
+				go_to_point(existing_points)
+				
+			if get_parent().get_node("invertion/invert/anim").assigned_animation == "show":
+				get_parent().get_node("invertion/invert/anim").play("hide")
+				
+				if $time_sound.is_playing() and $time_sound.get_playback_position() < 3.92:
+					$time_sound.play(3.92)
+			
+			$slowmo_timer.stop(); slowmo_timeout = false
+			can_attack = false
+			$recoil_timer.start(5)
 			
 			
 		get_parent().get_node("point_cursor").visible = false; slice_mode = false
@@ -105,21 +117,12 @@ func _physics_process(delta):
 	if Input.is_action_just_pressed("right_click") and can_attack:
 		if !$time_sound.is_playing():
 			$time_sound.play()
+			
+		$slowmo_timer.start(4)
 
 
 	if Input.is_action_just_pressed("right_click") and can_attack:
 		get_parent().get_node("invertion/invert/anim").play("show")
-		
-	elif Input.is_action_just_released("right_click") and can_attack:
-		get_parent().get_node("invertion/invert/anim").play("hide")
-		
-		if $time_sound.is_playing() and $time_sound.get_playback_position() < 3.92:
-			$time_sound.play(3.92)
-		
-		
-		
-		can_attack = false
-		$recoil_timer.start()
 
 
 	if slice_mode:
@@ -130,8 +133,6 @@ func _physics_process(delta):
 		$sprite.flip_h = true
 	if velocity.x > 0 or velocity_to.x > 0:
 		$sprite.flip_h = false
-		
-	#print("velocity: " + str(velocity) + " velocity_to: " + str(velocity_to))
 
 
 func go_to_point(points):
@@ -191,6 +192,16 @@ func after_attack():
 		
 		can_attack = false
 		$recoil_timer.start()
+		get_parent().get_node("HUD/time_bar").value = 100
+
 
 func _on_recoil_timer_timeout():
 	can_attack = true
+	slowmo_timeout = false
+	
+	AudioControl.play_sound("res://sounds/harp_1.wav")
+
+
+func _on_slowmo_timer_timeout():
+	slowmo_timeout = true
+	after_attack()
