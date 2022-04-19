@@ -31,11 +31,23 @@ func _ready():
 	can_attack = true
 	
 	$points_line.set_as_toplevel(true)
-	
+
+
 func _process(delta):
 	if $points_line.get_point_count() > 0:
 		$points_line.set_point_position(0, self.position)
-	
+
+
+
+
+
+
+
+
+
+
+
+
 func _physics_process(delta):
 	var velocity = Vector2(0,0)
 	
@@ -72,18 +84,18 @@ func _physics_process(delta):
 	if Input.is_action_pressed("right_click") and !on_way and can_attack and !slowmo_timeout:
 		get_parent().get_node("point_cursor").visible = true; slice_mode = true
 		
-		
 		if Input.is_action_just_pressed("left_click") and existing_points.size() < 5 and get_parent().get_node("point_cursor").can_place_point:
 			
 			var point = load("res://point.tscn").instance()
 			point.position = get_parent().get_node("point_cursor").position
 			
+			
 			if $points_line.get_point_count() == 0:
 				$points_line.add_point(self.position)
 			$points_line.add_point(point.position)
 			
-			get_tree().get_root().get_node("main").add_child(point, true)
 			
+			get_tree().get_root().get_node("main").add_child(point, true)
 			existing_points.append(str(point.get_name()))
 			
 			
@@ -91,7 +103,7 @@ func _physics_process(delta):
 			get_parent().get_node("point_cursor/Sprite/anim").play("placed")
 
 	else:
-		if Input.is_action_just_released("right_click") and !on_way or slowmo_timeout:
+		if Input.is_action_just_released("right_click") and !on_way and can_attack or slowmo_timeout:
 			if existing_points.size() != 0:
 				go_to_point(existing_points)
 				
@@ -101,8 +113,14 @@ func _physics_process(delta):
 				if $time_sound.is_playing() and $time_sound.get_playback_position() < 3.92:
 					$time_sound.play(3.92)
 			
-			$slowmo_timer.stop(); slowmo_timeout = false
+			
+			$slowmo_timer.stop()
+			
+			
+			slowmo_timeout = false
 			can_attack = false
+			
+			
 			$recoil_timer.start(5)
 			
 			
@@ -125,21 +143,31 @@ func _physics_process(delta):
 		get_parent().get_node("invertion/invert/anim").play("show")
 
 
+
+
+	if velocity.x < 0 or on_way and velocity_to.x < 0:
+		$sprite.flip_h = true
+	if velocity.x > 0 or on_way and velocity_to.x > 0:
+		$sprite.flip_h = false
+
 	if slice_mode:
 		$sprite.play("run")
 
 
-	if velocity.x < 0 or velocity_to.x < 0:
-		$sprite.flip_h = true
-	if velocity.x > 0 or velocity_to.x > 0:
-		$sprite.flip_h = false
+
+
+
+
+
 
 
 func go_to_point(points):
 	var current_point = get_tree().get_root().get_node("main/" + str(points[0]))
 	
 	end_pos = current_point.position
-	on_way = true; current_point.im_next = true
+	current_point.im_next = true
+	
+	on_way = true
 	
 
 	$Tween.interpolate_property(self, "slice_speed", 800, 3400, 0.4, Tween.TRANS_LINEAR, Tween.EASE_IN)
@@ -169,7 +197,9 @@ func _on_player_im_here():
 	
 	
 	
-	on_way = false; yield(get_tree().create_timer(0.1), "timeout")
+	on_way = false
+	yield(get_tree().create_timer(0.1), "timeout")
+	
 	
 	
 	if existing_points.size() != 0:
@@ -181,7 +211,11 @@ func _on_player_im_here():
 		$sprite/anim.play("show")
 		
 		
+		
+		
 func after_attack():
+		#print("i was here")
+	
 		can_walk = false
 		$sprite.play("stop")
 		yield(get_tree().create_timer(1.5), "timeout")
@@ -191,11 +225,12 @@ func after_attack():
 		
 		
 		can_attack = false
-		$recoil_timer.start()
-		get_parent().get_node("HUD/time_bar").value = 100
+		$recoil_timer.start(5)
+		#print("recoil taimer started")
 
 
 func _on_recoil_timer_timeout():
+	#print("recoil is done")
 	can_attack = true
 	slowmo_timeout = false
 	

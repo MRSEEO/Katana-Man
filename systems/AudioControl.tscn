@@ -16,6 +16,8 @@ script = ExtResource( 1 )
 
 [node name="sound3" type="AudioStreamPlayer" parent="."]
 
+[node name="death" type="AudioStreamPlayer" parent="."]
+
 [node name="fadeout" type="Tween" parent="."]
 
 [node name="fadein" type="Tween" parent="."]

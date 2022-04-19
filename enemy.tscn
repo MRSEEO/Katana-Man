@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=2]
+[gd_scene load_steps=16 format=2]
 
 [ext_resource path="res://images/enemy_idle.png" type="Texture" id=1]
 [ext_resource path="res://images/enemy_walk.png" type="Texture" id=2]
@@ -76,6 +76,12 @@ tracks/1/keys = {
 "values": [ Vector2( 0, 0 ), Vector2( 1, 0 ), Vector2( -1, 0 ), Vector2( 0, 0 ) ]
 }
 
+[sub_resource type="StyleBoxFlat" id=23]
+bg_color = Color( 0.85098, 0.270588, 0.152941, 1 )
+
+[sub_resource type="StyleBoxFlat" id=24]
+bg_color = Color( 0, 0, 0, 1 )
+
 [node name="enemy" type="KinematicBody2D"]
 position = Vector2( 216, 5 )
 scale = Vector2( 3, 3 )
@@ -86,7 +92,6 @@ script = ExtResource( 3 )
 [node name="Sprite" type="AnimatedSprite" parent="."]
 frames = SubResource( 16 )
 animation = "idle"
-frame = 1
 playing = true
 
 [node name="collision" type="CollisionShape2D" parent="."]
@@ -101,5 +106,18 @@ shape = SubResource( 21 )
 
 [node name="anim" type="AnimationPlayer" parent="."]
 anims/hitted = SubResource( 22 )
+
+[node name="Tween" type="Tween" parent="."]
+
+[node name="hp" type="ProgressBar" parent="."]
+margin_left = -5.0
+margin_top = -7.0
+margin_right = 5.0
+margin_bottom = -5.0
+size_flags_horizontal = 0
+custom_styles/fg = SubResource( 23 )
+custom_styles/bg = SubResource( 24 )
+value = 10.21
+percent_visible = false
 
 [connection signal="area_entered" from="hitbox" to="." method="_on_hitbox_area_entered"]

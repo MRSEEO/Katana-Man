@@ -51,10 +51,14 @@ func play_sound(file : String):
 		$sound.set_stream(load(file))
 		$sound.play(); #print(str(file) + " played on sound")
 	
-	elif $sound.is_playing():
+	elif $sound.is_playing() and !$sound2.is_playing():
 		$sound2.set_stream(load(file))
 		$sound2.play(); #print(str(file) + " played on sound2")
 		
-	elif $sound.is_playing() and $sound2.is_playing():
+	elif $sound.is_playing() and $sound2.is_playing() and !$sound3.is_playing():
 		$sound3.set_stream(load(file))
 		$sound3.play(); #print(str(file) + " played on sound3")
+		
+func play_death(file : String):
+	$death.set_stream(load(file))
+	$death.play()
