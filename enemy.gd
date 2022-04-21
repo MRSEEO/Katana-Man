@@ -3,11 +3,12 @@ extends KinematicBody2D
 
 var hp = 100
 var speed = 60
+var can_walk = true
 
 var dead = false
-var can_attack = false
 var on_attack = false
-var last_player_pos = Vector2(0,0)
+var dash = false
+var last_position : Vector2
 
 
 var slowmo = false
@@ -18,6 +19,7 @@ var one_shot = false
 func _ready():
 	$hp.value = hp
 
+var player
 func _process(delta):
 ###SLOWMO
 	slowmo = get_parent().slowmo
@@ -30,20 +32,29 @@ func _process(delta):
 	
 	
 	
-	var player = get_parent().get_node("player").position
+	player = get_parent().get_node("player").position
 	
+	if !on_attack and position.distance_to(player) <= 100:
+		on_attack = true
+		$anim.play("attack")
+		
+		
 	var velocity = position.direction_to(player)
-	if !on_attack and position.distance_to(last_player_pos) > 100:
-		can_attack = false
+	if !dash and can_walk:
 		move_and_collide(velocity * speed * delta)
+	elif dash:
+		can_walk = false
+		if !$anim.current_animation == "attack" and position.distance_to(last_position) > 60:
+			velocity = position.direction_to(last_position)
+			move_and_collide(velocity * Vector2(10,10) * speed * delta)
+			
+		else:
+			dash = false
+			on_attack = false
+			can_walk = true
+			
+			$anim.stop()
 		
-	elif !on_attack and position.distance_to(last_player_pos) <= 100:
-		if !$anim.is_playing() and $anim.current_animation != "attack":
-			last_player_pos = player
-			$anim.play("attack")
-		
-	if on_attack and position.distance_to(last_player_pos) > 10:
-		move_and_collide(position.direction_to(last_player_pos) * speed * 10 * delta)
 		
 	
 	if hp < 0:
@@ -94,19 +105,17 @@ func _on_hitbox_area_entered(area):
 			get_tree().current_scene.add_child(blood)
 			blood.global_position = global_position
 			blood.rotation = global_position.angle_to_point(get_parent().get_node("player").position) * -1
-
-
-func _on_attack_timeout():
-	can_attack = true
 	
 
 
 func _on_anim_animation_finished(anim_name):
 	if anim_name == "attack":
-		on_attack = true
 		$anim.play("attack_reversed")
+		dash = true
+		last_position = player
 
 	if anim_name == "attack_reversed":
 		on_attack = false
-		can_attack = true
+		dash = false
+		can_walk = true
 	
