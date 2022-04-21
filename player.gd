@@ -1,11 +1,19 @@
 extends KinematicBody2D
 
+var health = 3
 var speed = 150
+
+
+
 
 var slice_mode = false
 var on_way = true
 var can_walk = true
 var can_attack = true
+
+var invisibility = false
+var dead = false
+signal dead
 
 var existing_points = []
 var points_pos = []
@@ -156,6 +164,19 @@ func _physics_process(delta):
 
 
 
+###invisibility
+	if invisibility and $sprite/anim.current_animation == "invisibility":
+		if !$sprite/anim/Tween.is_active():
+			$sprite/anim/Tween.interpolate_property($sprite/anim, "playback_speed", 0.1, 1, $invisibility_timer.wait_time, Tween.TRANS_LINEAR, Tween.EASE_OUT)
+			$sprite/anim/Tween.start()
+		
+	elif !invisibility:
+		if $sprite/anim.current_animation == "invisibility":
+			$sprite/anim.play("normal")
+			
+			$sprite/anim.playback_speed = 1
+
+
 
 
 
@@ -240,3 +261,29 @@ func _on_recoil_timer_timeout():
 func _on_slowmo_timer_timeout():
 	slowmo_timeout = true
 	after_attack()
+
+
+
+
+
+func _on_hitbox_area_entered(area):
+	if area.is_in_group("enemy") and !invisibility and !on_way:
+		if health == 1:
+			emit_signal("dead")
+			dead = true
+			
+			self.scale.x = 20
+			
+			health -= 1
+			
+		elif health > 1:
+			health -= 1; invisibility = true
+			$invisibility_timer.start()
+			
+			$sprite/anim.animation_set_next("hitted", "invisibility")
+			$sprite/anim.play("hitted")
+
+
+
+func _on_invisibility_timer_timeout():
+	invisibility = false

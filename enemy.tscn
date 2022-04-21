@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=2]
+[gd_scene load_steps=18 format=2]
 
 [ext_resource path="res://images/enemy_idle.png" type="Texture" id=1]
 [ext_resource path="res://images/enemy_walk.png" type="Texture" id=2]
@@ -48,6 +48,38 @@ animations = [ {
 [sub_resource type="RectangleShape2D" id=21]
 extents = Vector2( 3.16666, 3.33334 )
 
+[sub_resource type="Animation" id=25]
+resource_name = "attack"
+length = 2.0
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite:self_modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 2 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 1 ), Color( 1, 0, 0, 1 ) ]
+}
+
+[sub_resource type="Animation" id=26]
+resource_name = "attack_reversed"
+length = 2.0
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite:self_modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 2 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 0, 0, 1 ), Color( 1, 1, 1, 1 ) ]
+}
+
 [sub_resource type="Animation" id=22]
 resource_name = "hitted"
 length = 0.3
@@ -92,19 +124,22 @@ script = ExtResource( 3 )
 [node name="Sprite" type="AnimatedSprite" parent="."]
 frames = SubResource( 16 )
 animation = "idle"
+frame = 2
 playing = true
 
 [node name="collision" type="CollisionShape2D" parent="."]
 position = Vector2( -0.166656, 1.66667 )
 shape = SubResource( 21 )
 
-[node name="hitbox" type="Area2D" parent="."]
+[node name="hitbox" type="Area2D" parent="." groups=["enemy"]]
 
 [node name="collision" type="CollisionShape2D" parent="hitbox"]
 position = Vector2( 0, 1 )
 shape = SubResource( 21 )
 
 [node name="anim" type="AnimationPlayer" parent="."]
+anims/attack = SubResource( 25 )
+anims/attack_reversed = SubResource( 26 )
 anims/hitted = SubResource( 22 )
 
 [node name="Tween" type="Tween" parent="."]
@@ -120,4 +155,10 @@ custom_styles/bg = SubResource( 24 )
 value = 10.21
 percent_visible = false
 
+[node name="attack_recoil" type="Timer" parent="."]
+wait_time = 2.0
+one_shot = true
+
 [connection signal="area_entered" from="hitbox" to="." method="_on_hitbox_area_entered"]
+[connection signal="animation_finished" from="anim" to="." method="_on_anim_animation_finished"]
+[connection signal="timeout" from="attack_recoil" to="." method="_on_attack_timeout"]
