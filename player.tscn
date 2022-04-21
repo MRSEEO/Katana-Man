@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=2]
+[gd_scene load_steps=27 format=2]
 
 [ext_resource path="res://images/idle.png" type="Texture" id=1]
 [ext_resource path="res://images/run_1.png" type="Texture" id=2]
@@ -6,6 +6,7 @@
 [ext_resource path="res://sounds/time_sound.wav" type="AudioStream" id=4]
 [ext_resource path="res://Line2D.gd" type="Script" id=5]
 [ext_resource path="res://player.gd" type="Script" id=6]
+[ext_resource path="res://trail_to_mouse.gd" type="Script" id=7]
 
 [sub_resource type="AtlasTexture" id=1]
 atlas = ExtResource( 1 )
@@ -155,7 +156,7 @@ tracks/0/keys = {
 extents = Vector2( 4, 2.66667 )
 
 [sub_resource type="Curve" id=24]
-_data = [ Vector2( 0, 0 ), 0.0, 0.0, 0, 0, Vector2( 0.751852, 0.990909 ), 2.43837e-07, 2.43837e-07, 0, 0, Vector2( 1, 0 ), 0.0, 0.0, 0, 0 ]
+_data = [ Vector2( 0, 0 ), 0.0, 0.0, 0, 0, Vector2( 0.523529, 1 ), 2.43837e-07, 2.43837e-07, 0, 0, Vector2( 1, 0 ), 0.0, 0.0, 0, 0 ]
 
 [sub_resource type="Gradient" id=23]
 offsets = PoolRealArray( 0, 0.125523, 0.502092, 0.861925, 1 )
@@ -175,7 +176,7 @@ script = ExtResource( 6 )
 [node name="sprite" type="AnimatedSprite" parent="."]
 frames = SubResource( 5 )
 animation = "idle"
-frame = 1
+frame = 3
 playing = true
 
 [node name="anim" type="AnimationPlayer" parent="sprite"]
@@ -212,6 +213,14 @@ trailLength = 25
 [node name="Timer" type="Timer" parent="trail"]
 wait_time = 0.05
 autostart = true
+
+[node name="trail_to_mouse" type="Line2D" parent="."]
+points = PoolVector2Array( 0, 0, 0, 0 )
+width_curve = SubResource( 24 )
+default_color = Color( 1, 1, 1, 1 )
+gradient = SubResource( 23 )
+joint_mode = 2
+script = ExtResource( 7 )
 
 [node name="recoil_timer" type="Timer" parent="."]
 wait_time = 5.0

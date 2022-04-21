@@ -91,6 +91,7 @@ func _physics_process(delta):
 	
 	if Input.is_action_pressed("right_click") and !on_way and can_attack and !slowmo_timeout:
 		get_parent().get_node("point_cursor").visible = true; slice_mode = true
+
 		
 		if Input.is_action_just_pressed("left_click") and existing_points.size() < 5 and get_parent().get_node("point_cursor").can_place_point:
 			

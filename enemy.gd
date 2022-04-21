@@ -17,6 +17,9 @@ var slowmo = false
 var one_shot = false
 
 func _ready():
+	on_attack = false
+	dash = false
+	
 	$hp.value = hp
 
 var player
@@ -33,27 +36,21 @@ func _process(delta):
 	
 	
 	player = get_parent().get_node("player").position
-	
-	if !on_attack and position.distance_to(player) <= 100:
+		
+	if !on_attack and position.distance_to(player) <= 100 and !$anim.current_animation == "attack":
 		on_attack = true
 		$anim.play("attack")
 		
-		
 	var velocity = position.direction_to(player)
-	if !dash and can_walk:
+	if !on_attack and can_walk:
 		move_and_collide(velocity * speed * delta)
-	elif dash:
-		can_walk = false
-		if !$anim.current_animation == "attack" and position.distance_to(last_position) > 60:
-			velocity = position.direction_to(last_position)
-			move_and_collide(velocity * Vector2(10,10) * speed * delta)
-			
-		else:
+	
+	if dash:
+		if position.distance_to(last_position) < 30:
 			dash = false
-			on_attack = false
-			can_walk = true
-			
-			$anim.stop()
+		else:
+			move_and_collide(position.direction_to(last_position) * speed * 5 * delta)
+		
 		
 		
 	
@@ -114,7 +111,7 @@ func _on_anim_animation_finished(anim_name):
 		dash = true
 		last_position = player
 
-	if anim_name == "attack_reversed":
+	if anim_name == "attack_reversed" or anim_name == "hitted":
 		on_attack = false
 		dash = false
 		can_walk = true
