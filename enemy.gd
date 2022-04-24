@@ -46,7 +46,7 @@ func _process(delta):
 		move_and_collide(velocity * speed * delta)
 	
 	if dash:
-		if position.distance_to(last_position) < 30:
+		if position.distance_to(last_position) == 0:
 			dash = false
 		else:
 			move_and_collide(position.direction_to(last_position) * speed * 5 * delta)

@@ -50,7 +50,6 @@ extents = Vector2( 3.16666, 3.33334 )
 
 [sub_resource type="Animation" id=25]
 resource_name = "attack"
-length = 2.0
 tracks/0/type = "value"
 tracks/0/path = NodePath("Sprite:self_modulate")
 tracks/0/interp = 1
@@ -58,7 +57,7 @@ tracks/0/loop_wrap = true
 tracks/0/imported = false
 tracks/0/enabled = true
 tracks/0/keys = {
-"times": PoolRealArray( 0, 2 ),
+"times": PoolRealArray( 0, 1 ),
 "transitions": PoolRealArray( 1, 1 ),
 "update": 0,
 "values": [ Color( 1, 1, 1, 1 ), Color( 1, 0, 0, 1 ) ]
@@ -122,10 +121,9 @@ collision_mask = 2
 script = ExtResource( 3 )
 
 [node name="Sprite" type="AnimatedSprite" parent="."]
-self_modulate = Color( 1, 0.55, 0.55, 1 )
 frames = SubResource( 16 )
 animation = "idle"
-frame = 2
+frame = 1
 playing = true
 
 [node name="collision" type="CollisionShape2D" parent="."]

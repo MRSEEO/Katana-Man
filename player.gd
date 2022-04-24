@@ -39,6 +39,9 @@ func _ready():
 	can_attack = true
 	
 	$points_line.set_as_toplevel(true)
+	
+	#START ANIMATION TREE
+	$sprite/player_animation/anim_tree.get("parameters/playback").start("idle")
 
 
 func _process(delta):
@@ -46,16 +49,7 @@ func _process(delta):
 		$points_line.set_point_position(0, self.position)
 
 
-
-
-
-
-
-
-
-
-
-
+onready var anim_tree = get_node("sprite/player_animation/anim_tree")
 func _physics_process(delta):
 	var velocity = Vector2(0,0)
 	
@@ -71,12 +65,20 @@ func _physics_process(delta):
 			velocity.x += speed
 			
 		velocity = velocity.normalized()
-		move_and_collide(velocity * speed * 2 * delta)
+		move_and_collide(velocity * speed * 1.5 * delta)
 		
-		if velocity != Vector2(0,0) and !slice_mode:
-			$sprite.play("run")
-		elif velocity == Vector2(0,0) or slice_mode:
-			$sprite.play("idle")
+		
+		if velocity == Vector2.ZERO:
+			anim_tree.get("parameters/playback").travel("idle")
+			
+		else:
+			anim_tree.get("parameters/playback").travel("run")
+			anim_tree.set("parameters/run/blend_position", velocity)
+			
+			anim_tree.set("parameters/idle/BlendSpace2D/blend_position", velocity)
+			anim_tree.set("parameters/idle/TimeScale", 0.5)
+		
+			
 			
 		trail = false
 	
@@ -150,17 +152,6 @@ func _physics_process(delta):
 
 	if Input.is_action_just_pressed("right_click") and can_attack:
 		get_parent().get_node("invertion/invert/anim").play("show")
-
-
-
-
-	if velocity.x < 0 or on_way and velocity_to.x < 0:
-		$sprite.flip_h = true
-	if velocity.x > 0 or on_way and velocity_to.x > 0:
-		$sprite.flip_h = false
-
-	if slice_mode:
-		$sprite.play("run")
 
 
 
@@ -239,11 +230,14 @@ func after_attack():
 		#print("i was here")
 	
 		can_walk = false
-		$sprite.play("stop")
+		
+		anim_tree.get("parameters/playback").travel("after_slice")
+		anim_tree.set("parameters/after_slice/blend_position", velocity_to)
+			
 		yield(get_tree().create_timer(1.5), "timeout")
 		
 		can_walk = true
-		$sprite.play("idle")
+		anim_tree.get("parameters/playback").travel("idle")
 		
 		
 		can_attack = false

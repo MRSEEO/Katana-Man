@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/point.png-3c5730580245564e05f1079cb3bd8c96.stex"
+path="res://.import/sam_sheet.png-866f65994b682aa1d15ab3904d8d9aca.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://images/point.png"
-dest_files=[ "res://.import/point.png-3c5730580245564e05f1079cb3bd8c96.stex" ]
+source_file="res://images/sam_sheet.png"
+dest_files=[ "res://.import/sam_sheet.png-866f65994b682aa1d15ab3904d8d9aca.stex" ]
 
 [params]
 
